@@ -85,7 +85,9 @@ public class WiseSayingRepository {
     }
 
     public List<WiseSaying> findAll() {
-        return wiseSayingMap.values().stream().toList();
+        return wiseSayingMap.values().stream()
+                .sorted(Comparator.comparingLong(WiseSaying::getId).reversed())
+                .toList();
     }
 
     public void fileBuild() throws IOException {
