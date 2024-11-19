@@ -3,10 +3,8 @@ package repository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import entity.WiseSaying;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +35,7 @@ public class WiseSayingRepository {
             try {
                 WiseSaying wiseSaying = objectMapper.readValue(file, WiseSaying.class);
                 wiseSayingMap.put(wiseSaying.getId(), wiseSaying);
-                id = Math.max(id, wiseSaying.getId()); // 가장 큰 id를 현재 id로 설정
+                loadLastId();// 가장 큰 id를 현재 id로 설정
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -102,5 +100,18 @@ public class WiseSayingRepository {
 
         bufferedWriter.write(String.valueOf(id));
         bufferedWriter.close();
+    }
+
+    public void loadLastId() {
+        try {
+            File file = new File(dir, "lastId.txt");
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            id = Integer.parseInt(bufferedReader.readLine());
+        } catch (FileNotFoundException e) {
+            return;
+        } catch (IOException e) {
+            System.out.println("lastId 로드 오류");
+        }
     }
 }
