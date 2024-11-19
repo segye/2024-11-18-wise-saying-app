@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"id":5,"message":"테스트","author":"테스트"}
+=======
+{"id":5,"message":"테스트","author":"성공인가"}
+>>>>>>> d072deb (lastId 추출 추가)

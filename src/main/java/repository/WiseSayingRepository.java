@@ -39,7 +39,7 @@ public class WiseSayingRepository {
             try {
                 WiseSaying wiseSaying = objectMapper.readValue(file, WiseSaying.class);
                 wiseSayingMap.put(wiseSaying.getId(), wiseSaying);
-                loadLastId();// 가장 큰 id를 현재 id로 설정
+                readLastId();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -116,6 +116,17 @@ public class WiseSayingRepository {
             return;
         } catch (IOException e) {
             System.out.println("lastId 로드 오류");
+        }
+    }
+
+    private void readLastId(){
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(dir, "lastId.txt")));
+            id = Integer.parseInt(bufferedReader.readLine());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
