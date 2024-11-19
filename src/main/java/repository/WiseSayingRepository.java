@@ -61,8 +61,7 @@ public class WiseSayingRepository {
     public void deleteById(int id) {
         // 맵에서 해당 ID 삭제
         WiseSaying removed = wiseSayingMap.remove(id);
-
-        // 삭제하려는 명언이 없으면 예외 처리
+        
         if (removed == null) {
             throw new RuntimeException(id + "번 명언은 존재하지 않습니다.");
         }
