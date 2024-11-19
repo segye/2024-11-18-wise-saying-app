@@ -24,6 +24,7 @@ public class Main {
             } else if (command.equals("빌드")) {
                 service.build();
             } else if (command.equals("종료")) {
+                service.build();
                 scanner.close();
                 break;
             }
