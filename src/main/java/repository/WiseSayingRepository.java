@@ -17,9 +17,9 @@ public class WiseSayingRepository {
     private static final Map<Integer, WiseSaying> wiseSayingMap = new LinkedHashMap<>(); // 삽입 순서 보장
     private final ObjectMapper objectMapper = new ObjectMapper();
     private static final String dir = "db/wiseSaying";
-    private static final String last_dir =  dir + "/lastId.txt";
+    private static final String last_dir = dir + "/lastId.txt";
 
-    private int id;
+    private int id = 0;
 
     public WiseSayingRepository() {
         // 디렉토리 생성
@@ -37,7 +37,7 @@ public class WiseSayingRepository {
 
         for (File file : files) {
             try {
-                WiseSaying wiseSaying = objectMapper.readValue(file, WiseSaying.class);
+                WiseSaying wiseSaying = readFromFile(file);
                 wiseSayingMap.put(wiseSaying.getId(), wiseSaying);
                 readLastId();
             } catch (IOException e) {
@@ -52,18 +52,26 @@ public class WiseSayingRepository {
         WiseSaying wiseSaying = new WiseSaying(id, message, author);
 
         wiseSayingMap.put(id, wiseSaying);
-        File file = new File(dir, id + ".json");
-        objectMapper.writeValue(file, wiseSaying);
 
+        String json = String.format(
+                "{\n  \"id\": %d,\n  \"message\": \"%s\",\n  \"author\": \"%s\"\n}",
+                wiseSaying.getId(),
+                wiseSaying.getMessage(),
+                wiseSaying.getAuthor()
+        );
+
+        File file = new File(dir, id + ".json");
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
+        bufferedWriter.write(json);
+        bufferedWriter.close();
         return id;
     }
 
-    public void deleteById(int id) {
-        // 맵에서 해당 ID 삭제
+    public boolean deleteById(int id) {
         WiseSaying removed = wiseSayingMap.remove(id);
-        
+
         if (removed == null) {
-            throw new RuntimeException(id + "번 명언은 존재하지 않습니다.");
+            return false;
         }
 
         // 파일 삭제
@@ -73,14 +81,16 @@ public class WiseSayingRepository {
                 throw new RuntimeException(id + ".json 파일 삭제에 실패했습니다.");
             }
         }
+        return true;
     }
 
     public void update(int id, String message, String author) throws IOException {
         WiseSaying wiseSaying = new WiseSaying(id, message, author);
-        wiseSayingMap.put(id ,wiseSaying);
-        File file = new File(dir, id +".json");
+        wiseSayingMap.put(id, wiseSaying);
+        File file = new File(dir, id + ".json");
         objectMapper.writeValue(file, wiseSaying);
     }
+
     public WiseSaying findById(int id) {
         return wiseSayingMap.get(id);
     }
@@ -105,7 +115,7 @@ public class WiseSayingRepository {
         bufferedWriter.close();
     }
 
-    private void readLastId(){
+    private void readLastId() {
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(dir, "lastId.txt")));
             id = Integer.parseInt(bufferedReader.readLine());
@@ -115,4 +125,42 @@ public class WiseSayingRepository {
             throw new RuntimeException(e);
         }
     }
+
+
+    private WiseSaying readFromFile(File file) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = bufferedReader.readLine()) != null) {
+            sb.append(line.trim());
+        }
+
+        String json = sb.toString();
+
+        int id = extractJson(json, "id");
+        String message = extractJsonString(json, "message");
+        String author = extractJsonString(json, "author");
+
+        return new WiseSaying(id, message, author);
+    }
+
+    private int extractJson(String json, String field) {
+        String pattern = "\"" + field + "\":";
+        int start = json.indexOf(pattern) + pattern.length();
+        int end = json.indexOf(",", start);
+
+        if (end == -1) {
+            end = json.indexOf("}", start);
+        }
+
+        return Integer.parseInt(json.substring(start, end).trim());
+    }
+
+    private String extractJsonString(String json, String field) {
+        String pattern = "\"" + field + "\":\"";
+        int start = json.indexOf(pattern) + pattern.length();
+        int end = json.indexOf("\"", start);
+        return json.substring(start, end);
+    }
+
 }
