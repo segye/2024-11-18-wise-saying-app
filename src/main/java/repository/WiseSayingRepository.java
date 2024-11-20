@@ -154,7 +154,7 @@ public class WiseSayingRepository {
     }
 
 
-    private WiseSaying readFromFile(File file) throws IOException {
+    public WiseSaying readFromFile(File file) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
         StringBuilder sb = new StringBuilder();
         String line;
@@ -171,7 +171,7 @@ public class WiseSayingRepository {
         return new WiseSaying(id, message, author);
     }
 
-    private int extractJson(String json, String field) {
+    public int extractJson(String json, String field) {
         String pattern = "\"" + field + "\":";
         int start = json.indexOf(pattern) + pattern.length();
         int end = json.indexOf(",", start);
@@ -183,11 +183,15 @@ public class WiseSayingRepository {
         return Integer.parseInt(json.substring(start, end).trim());
     }
 
-    private String extractJsonString(String json, String field) {
+    public String extractJsonString(String json, String field) {
         String pattern = "\"" + field + "\": \"";
         int start = json.indexOf(pattern) + pattern.length();
         int end = json.indexOf("\"", start);
         return json.substring(start, end);
+    }
+
+    public int getId() {
+        return id + 1;
     }
 
 }

@@ -44,4 +44,8 @@ public class WiseSayingService {
         repository.fileBuild();
     }
 
+    public int getId() {
+        return repository.getId();
+    }
+
 }

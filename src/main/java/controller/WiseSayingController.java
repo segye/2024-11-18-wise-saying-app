@@ -8,13 +8,16 @@ import java.util.Scanner;
 
 public class WiseSayingController {
     private static final WiseSayingService service = new WiseSayingService();
-    private final Scanner scanner = new Scanner(System.in);
+    private final Scanner scanner;
+
+    public WiseSayingController(Scanner scanner) {
+        this.scanner = scanner;
+    }
     public void run() throws IOException {
         System.out.println("== 명언 앱 ==");
         while (true) {
             System.out.print("명령) ");
             String command = scanner.nextLine();
-
             if (command.equals("등록")) {
                 System.out.print("명언 : ");
                 String message = scanner.nextLine();
@@ -48,6 +51,7 @@ public class WiseSayingController {
                 break;
             }
         }
+        scanner.close();
     }
 
     private void handleUpdate(int id) {
@@ -73,7 +77,6 @@ public class WiseSayingController {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-
     }
 
 }
