@@ -87,8 +87,17 @@ public class WiseSayingRepository {
     public void update(int id, String message, String author) throws IOException {
         WiseSaying wiseSaying = new WiseSaying(id, message, author);
         wiseSayingMap.put(id, wiseSaying);
+
+        String json = String.format(
+                "{\n  \"id\": %d,\n  \"message\": \"%s\",\n  \"author\": \"%s\"\n}",
+                wiseSaying.getId(),
+                wiseSaying.getMessage(),
+                wiseSaying.getAuthor()
+        );
         File file = new File(dir, id + ".json");
-        objectMapper.writeValue(file, wiseSaying);
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
+        bufferedWriter.write(json);
+        bufferedWriter.close();
     }
 
     public WiseSaying findById(int id) {
@@ -103,7 +112,25 @@ public class WiseSayingRepository {
 
     public void fileBuild() throws IOException {
         File file = new File(dir, "data.json");
-        objectMapper.writeValue(file, wiseSayingMap.values());
+        StringBuilder sb = new StringBuilder();
+        sb.append("[\n");
+        int idx = 0;
+        for (WiseSaying wiseSaying : wiseSayingMap.values()) {
+            sb.append(String.format(
+                    "{\n  \"id\": %d,\n  \"message\": \"%s\",\n  \"author\": \"%s\"\n}",
+                    wiseSaying.getId(),
+                    wiseSaying.getMessage(),
+                    wiseSaying.getAuthor()
+            ));
+            if (++idx < wiseSayingMap.size()) {
+                sb.append(",\n");
+            }
+        }
+        sb.append("\n]");
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
+        bufferedWriter.write(sb.toString());
+        bufferedWriter.close();
+
     }
 
     public void saveLastId() throws IOException {
@@ -157,7 +184,7 @@ public class WiseSayingRepository {
     }
 
     private String extractJsonString(String json, String field) {
-        String pattern = "\"" + field + "\":\"";
+        String pattern = "\"" + field + "\": \"";
         int start = json.indexOf(pattern) + pattern.length();
         int end = json.indexOf("\"", start);
         return json.substring(start, end);
