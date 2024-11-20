@@ -117,7 +117,7 @@ public class WiseSayingRepository {
         int idx = 0;
         for (WiseSaying wiseSaying : wiseSayingMap.values()) {
             sb.append(String.format(
-                    "{\n  \"id\": %d,\n  \"message\": \"%s\",\n  \"author\": \"%s\"\n}",
+                    " {\n  \"id\": %d,\n  \"message\": \"%s\",\n  \"author\": \"%s\"\n }",
                     wiseSaying.getId(),
                     wiseSaying.getMessage(),
                     wiseSaying.getAuthor()
