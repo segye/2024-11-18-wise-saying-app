@@ -4,15 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import entity.WiseSaying;
 
 import java.io.*;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class WiseSayingRepository {
     private static final Map<Integer, WiseSaying> wiseSayingMap = new LinkedHashMap<>(); // 삽입 순서 보장
@@ -107,23 +99,23 @@ public class WiseSayingRepository {
     }
 
     public List<WiseSaying> findAll() {
-        return wiseSayingMap.values().stream()
-                .sorted(Comparator.comparingLong(WiseSaying::getId).reversed())
+        return wiseSayingMap.values()
+                .stream()
+                .sorted(Comparator.comparingInt(WiseSaying::getId).reversed())
                 .toList();
     }
 
     public List<WiseSaying> findByMessage(String message){
         return wiseSayingMap.values().stream()
-                .sorted(Comparator.comparingLong(WiseSaying::getId).reversed())
+                .sorted(Comparator.comparingInt(WiseSaying::getId).reversed())
                 .filter(wiseSaying -> wiseSaying.getMessage().contains(message))
-                .collect(Collectors.toList());
+                .toList();
     }
-
     public List<WiseSaying> findByAuthor(String author) {
         return wiseSayingMap.values().stream()
                 .sorted(Comparator.comparingLong(WiseSaying::getId).reversed())
-                .filter(wiseSaying -> wiseSaying.getAuthor().contains(author))
-                .collect(Collectors.toList());
+                .filter(wiseSaying -> wiseSaying.getMessage().contains(author))
+                .toList();
     }
 
     public void fileBuild() throws IOException {
@@ -209,5 +201,10 @@ public class WiseSayingRepository {
     public int getId() {
         return id + 1;
     }
+
+    public int getCount() {
+        return wiseSayingMap.size();
+    }
+
 
 }

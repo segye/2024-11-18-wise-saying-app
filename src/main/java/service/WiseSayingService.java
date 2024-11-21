@@ -23,8 +23,14 @@ public class WiseSayingService {
         }
     }
 
-    public List<WiseSaying> findAll() {
-        return repository.findAll();
+    public List<WiseSaying> findAll(int page, int size) {
+        int start = (page - 1) * size;
+
+        return repository.findAll()
+                .stream()
+                .skip(start)
+                .limit(size)
+                .toList();
     }
 
     public boolean delete(int id) {
@@ -44,16 +50,31 @@ public class WiseSayingService {
         repository.fileBuild();
     }
 
-    public List<WiseSaying> findByMessage(String message) {
-        return repository.findByMessage(message);
+    public List<WiseSaying> findByMessage(String message, int page, int size) {
+        int start = (page - 1) * size;
+
+        return repository.findByMessage(message)
+                .stream()
+                .skip(start)
+                .limit(size)
+                .toList();
     }
 
-    public List<WiseSaying> findByAuthor(String author) {
-        return repository.findByAuthor(author);
+    public List<WiseSaying> findByAuthor(String author,int page, int size) {
+        int start = (page - 1) * size;
+
+        return repository.findByAuthor(author)
+                .stream()
+                .skip(start)
+                .limit(size)
+                .toList();
     }
 
     public int getId() {
         return repository.getId();
     }
 
+    public int getCount() {
+        return repository.getCount();
+    }
 }

@@ -26,45 +26,87 @@ public class WiseSayingController {
                 String author = scanner.nextLine();
                 int id = service.add(message, author);
                 System.out.println(id + "번 명언이 등록되었습니다.");
-            } else if (command.equals("목록")) {
-                System.out.println("번호 / 작가 / 명언");
-                System.out.println("----------------------");
-                for (WiseSaying wiseSaying : service.findAll()) {
-                    System.out.println(wiseSaying.getId() + " / " + wiseSaying.getAuthor() + " / " + wiseSaying.getMessage());
-                }
-            } else if (command.startsWith("목록?")) {
-                String[] query = command.split("\\?")[1].split("&");
+            } else if (command.startsWith("목록")) {
+                int page = 1;
+                int size = 5;
                 String type = null;
                 String keyword = null;
-                for (String s : query) {
-                    String[] key = s.split("=");
-                    if (key[0].equals("keywordType")) {
-                        type = key[1];
-                    } else if (key[0].equals("keyword")) {
-                        keyword = key[1];
+
+                if (command.contains("?")) {
+                    String[] strings = command.split("\\?");
+                    String param = strings[1];
+                    String[] params = param.split("&");
+
+                    for (String s : params) {
+                        String[] values = s.split("=");
+                        if (values[0].equals("page")) {
+                            page = Integer.parseInt(values[1]);
+                        } else if (values[0].equals("keywordType")) {
+                            type = values[1];
+                        } else if (values[0].equals("keyword")) {
+                            keyword = values[1];
+                        }
+                    }
+
+                    List<WiseSaying> result = null;
+                    if (type != null && keyword != null) {
+                        if (type.equals("content")) {
+                            result = service.findByMessage(keyword, page, size);
+                        } else if (type.equals("author")) {
+                            result = service.findByAuthor(keyword, page, size);
+                        }
+                    } else {
+                        result = service.findAll(page, size);
+                    }
+                    int start = (page - 1) * size;
+                    int total = service.getCount();
+                    int totalPage = (int) Math.ceil((double) total / size);
+
+                    System.out.println("번호 / 작가 / 명언");
+                    System.out.println("----------------------");
+                    for (WiseSaying wiseSaying : result) {
+                        System.out.println(wiseSaying.getId() + " / " + wiseSaying.getAuthor() + " / " + wiseSaying.getMessage());
+                    }
+                    System.out.println("----------------------");
+                    System.out.print("페이지 : ");
+                    for (int i = 1; i <= totalPage; i++) {
+                        if (i == page) {
+                            System.out.print("[" + i + "]");
+                        } else {
+                            System.out.print(i);
+                        }
+                        if (i != totalPage) {
+                            System.out.print(" / ");
+                        }
+                    }
+                    System.out.println();
+                } else {
+                    List<WiseSaying> list = service.findAll(page, size);
+
+                    int total = service.getCount();
+                    int totalPage = (int) Math.ceil((double) total / size);
+
+                    System.out.println("번호 / 작가 / 명언");
+                    System.out.println("----------------------");
+                    for (WiseSaying wiseSaying : list) {
+                        System.out.println(wiseSaying.getId() + " / " + wiseSaying.getAuthor() + " / " + wiseSaying.getMessage());
+                    }
+                    System.out.println("----------------------");
+                    System.out.print("페이지 : ");
+                    for (int i = 1; i <= totalPage; i++) {
+                        if (i == page) {
+                            System.out.print("[" + i + "]");
+                        } else {
+                            System.out.print(i);
+                        }
+                        if (i != totalPage) {
+                            System.out.print(" / ");
+                        }
                     }
                 }
-
-                System.out.println("------------");
-                System.out.println("검색타입 : " + type);
-                System.out.println("검색어 : " + keyword);
-                System.out.println("------------");
-
-                List<WiseSaying> result;
-                if (type.equals("content")) {
-                    result = service.findByMessage(keyword);
-                } else if (type.equals("author")) {
-                    result = service.findByAuthor(keyword);
-                } else {
-                    result = service.findAll();
-                }
-
-                System.out.println("번호 / 작가 / 명언");
-                System.out.println("------------");
-                for (WiseSaying wiseSaying : result) {
-                    System.out.println(wiseSaying.getId() + " / " + wiseSaying.getAuthor() + " / " + wiseSaying.getMessage());
-                }
-            } else if (command.startsWith("삭제?id=")) {
+                System.out.println();
+            }
+            else if (command.startsWith("삭제?id=")) {
                 int id = Integer.parseInt(command.split("=")[1]);
                 boolean result = service.delete(id);
                 if (result) {
