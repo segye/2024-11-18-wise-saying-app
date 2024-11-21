@@ -4,6 +4,7 @@ import entity.WiseSaying;
 import service.WiseSayingService;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 
 public class WiseSayingController {
@@ -29,6 +30,38 @@ public class WiseSayingController {
                 System.out.println("번호 / 작가 / 명언");
                 System.out.println("----------------------");
                 for (WiseSaying wiseSaying : service.findAll()) {
+                    System.out.println(wiseSaying.getId() + " / " + wiseSaying.getAuthor() + " / " + wiseSaying.getMessage());
+                }
+            } else if (command.startsWith("목록?")) {
+                String[] query = command.split("\\?")[1].split("&");
+                String type = null;
+                String keyword = null;
+                for (String s : query) {
+                    String[] key = s.split("=");
+                    if (key[0].equals("keywordType")) {
+                        type = key[1];
+                    } else if (key[0].equals("keyword")) {
+                        keyword = key[1];
+                    }
+                }
+
+                System.out.println("------------");
+                System.out.println("검색타입 : " + type);
+                System.out.println("검색어 : " + keyword);
+                System.out.println("------------");
+
+                List<WiseSaying> result;
+                if (type.equals("content")) {
+                    result = service.findByMessage(keyword);
+                } else if (type.equals("author")) {
+                    result = service.findByAuthor(keyword);
+                } else {
+                    result = service.findAll();
+                }
+
+                System.out.println("번호 / 작가 / 명언");
+                System.out.println("------------");
+                for (WiseSaying wiseSaying : result) {
                     System.out.println(wiseSaying.getId() + " / " + wiseSaying.getAuthor() + " / " + wiseSaying.getMessage());
                 }
             } else if (command.startsWith("삭제?id=")) {

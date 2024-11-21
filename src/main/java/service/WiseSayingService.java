@@ -44,6 +44,14 @@ public class WiseSayingService {
         repository.fileBuild();
     }
 
+    public List<WiseSaying> findByMessage(String message) {
+        return repository.findByMessage(message);
+    }
+
+    public List<WiseSaying> findByAuthor(String author) {
+        return repository.findByAuthor(author);
+    }
+
     public int getId() {
         return repository.getId();
     }

@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class WiseSayingRepository {
     private static final Map<Integer, WiseSaying> wiseSayingMap = new LinkedHashMap<>(); // 삽입 순서 보장
@@ -100,6 +101,7 @@ public class WiseSayingRepository {
         bufferedWriter.close();
     }
 
+
     public WiseSaying findById(int id) {
         return wiseSayingMap.get(id);
     }
@@ -108,6 +110,20 @@ public class WiseSayingRepository {
         return wiseSayingMap.values().stream()
                 .sorted(Comparator.comparingLong(WiseSaying::getId).reversed())
                 .toList();
+    }
+
+    public List<WiseSaying> findByMessage(String message){
+        return wiseSayingMap.values().stream()
+                .sorted(Comparator.comparingLong(WiseSaying::getId).reversed())
+                .filter(wiseSaying -> wiseSaying.getMessage().contains(message))
+                .collect(Collectors.toList());
+    }
+
+    public List<WiseSaying> findByAuthor(String author) {
+        return wiseSayingMap.values().stream()
+                .sorted(Comparator.comparingLong(WiseSaying::getId).reversed())
+                .filter(wiseSaying -> wiseSaying.getAuthor().contains(author))
+                .collect(Collectors.toList());
     }
 
     public void fileBuild() throws IOException {
