@@ -106,15 +106,13 @@ public class WiseSayingRepository {
     }
 
     public List<WiseSaying> findByMessage(String message){
-        return wiseSayingMap.values()
-                .stream()
+        return wiseSayingMap.values().stream()
                 .sorted(Comparator.comparingInt(WiseSaying::getId).reversed())
                 .filter(wiseSaying -> wiseSaying.getMessage().contains(message))
                 .toList();
     }
     public List<WiseSaying> findByAuthor(String author) {
-        return wiseSayingMap.values()
-                .stream()
+        return wiseSayingMap.values().stream()
                 .sorted(Comparator.comparingLong(WiseSaying::getId).reversed())
                 .filter(wiseSaying -> wiseSaying.getAuthor().contains(author))
                 .toList();
