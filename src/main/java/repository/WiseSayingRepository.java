@@ -114,7 +114,7 @@ public class WiseSayingRepository {
     public List<WiseSaying> findByAuthor(String author) {
         return wiseSayingMap.values().stream()
                 .sorted(Comparator.comparingLong(WiseSaying::getId).reversed())
-                .filter(wiseSaying -> wiseSaying.getMessage().contains(author))
+                .filter(wiseSaying -> wiseSaying.getAuthor().contains(author))
                 .toList();
     }
 

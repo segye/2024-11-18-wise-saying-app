@@ -38,7 +38,6 @@ public class WiseSayingController {
         scanner.close();
     }
 
-
     private void add() {
         System.out.print("명언 : ");
         String message = scanner.nextLine();
@@ -47,7 +46,6 @@ public class WiseSayingController {
         int id = service.add(message, author);
         System.out.println(id + "번 명언이 등록되었습니다.");
     }
-
     private void list(String command) {
         int page = 1;
         int size = 5;
@@ -143,6 +141,7 @@ public class WiseSayingController {
         int id = Integer.parseInt(command.split("=")[1]);
         handleUpdate(id);
     }
+
     private void build() {
         try {
             service.build();
@@ -160,9 +159,6 @@ public class WiseSayingController {
             throw new RuntimeException(e);
         }
     }
-
-
-
 
     private void handleUpdate(int id) {
         WiseSaying wiseSaying = service.findById(id);
@@ -188,5 +184,4 @@ public class WiseSayingController {
             System.out.println(e.getMessage());
         }
     }
-
 }
